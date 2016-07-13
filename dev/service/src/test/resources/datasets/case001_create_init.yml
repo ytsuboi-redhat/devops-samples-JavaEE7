@@ -1,0 +1,9 @@
+operation_log:
+  - id: 90000001
+    operation: test
+    operated: 2016-05-24 12:00:00
+kv_store:
+  - id: 90000001
+    key: key1
+    value: value1
+    modified: 2016-05-24 12:00:00

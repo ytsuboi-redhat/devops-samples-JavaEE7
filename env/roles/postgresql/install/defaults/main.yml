@@ -1,0 +1,5 @@
+# file: roles/postgresql/install/defaults/main.yml
+
+dbuser: "devops"
+dbpass: "devops"
+dbname: "devops_sample_order"

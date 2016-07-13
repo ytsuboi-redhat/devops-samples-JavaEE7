@@ -1,0 +1,36 @@
+received_order_detail:
+
+received_order:
+  - order_no: 20160701-00001
+    ordered: 2016-07-01
+    desired_delivery_date: 2016-07-15
+    claim_no: C20160706001
+    billing_date: 2016-07-06
+    total_amount: 20000
+    tax: 1600
+    billing_amount: 21600
+    billed: true
+    disabled: false
+    modified: 2016-07-06 14:30:00
+  - order_no: 20160701-00002
+    ordered: 2016-07-01
+    desired_delivery_date: 2016-07-20
+    #claim_no:
+    #billing_date:
+    total_amount: 30000
+    tax: 2100
+    billing_amount: 32100
+    billed: false
+    disabled: true
+    modified: 2016-07-06 14:30:00
+  - order_no: 20160706-00001
+    ordered: 2016-07-06
+    desired_delivery_date: 2016-07-29
+    #claim_no:
+    #billing_date: null
+    total_amount: 50000
+    tax: 8000
+    billing_amount: 58000
+    billed: false
+    disabled: false
+    modified: 2016-07-06 14:30:00

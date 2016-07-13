@@ -1,0 +1,4 @@
+# file: eapservers_init.yml
+- hosts: eapservers
+  roles:
+    - { role: jboss-eap/copy, tags: ["jboss-eap/copy"] }

@@ -1,0 +1,3 @@
+# file: site.yml
+ - include: jenkinsservers.yml
+ - include: eapservers_init.yml
