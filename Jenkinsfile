@@ -1,7 +1,7 @@
 stage 'build'
 node {
     git url: 'https://github.com/ytsuboi-redhat/devops-samples-JavaEE7.git'
-    withEnv(["PATH+MAVEN=${tool 'Maven-default'}/bin"]) {
+    withEnv(["PATH+MAVEN=${tool 'maven 3.3.9'}/bin"]) {
         sh "mvn clean install -f dev -P development -P sonar-coverage"
         step([$class: 'JUnitResultArchiver', testResults: '**/target/surefire-reports/TEST-*.xml'])
         sh "mvn sonar:sonar -f dev"
@@ -21,7 +21,7 @@ node {
 
 stage 'integration-test'
 node {
-    withEnv(["PATH+MAVEN=${tool 'Maven-default'}/bin"]) {
+    withEnv(["PATH+MAVEN=${tool 'maven 3.3.9'}/bin"]) {
         sh "mvn integration-test -f dev -P arq-wildfly-remote"
     }
 }
