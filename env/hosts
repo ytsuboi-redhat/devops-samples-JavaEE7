@@ -1,9 +1,9 @@
 [eapservers]
-192.168.56.101
+127.0.0.1
 [jenkinsservers]
-192.168.56.101
+127.0.0.1
 [dbservers]
-192.168.56.101
+127.0.0.1
 
 [eapservers:vars]
 java_home=/usr/lib/jvm/java-1.8.0-openjdk
