@@ -1,0 +1,42 @@
+# file: roles/sonarqube/install/tasks/main.yml
+
+- name: stop SonarQube, if running
+  service: name=sonar state=stopped
+  ignore_errors: True
+
+- name: create SonarQube installation directory
+  file: path={{ sonarqube_install_dir }} owner=root group=root state=directory
+
+- name: download SonarQube
+  get_url: url={{ sonarqube_download_url }} dest={{ sonarqube_install_dir }}
+
+- name: install unzip
+  yum: name=unzip state=present
+
+- name: unarchive SonarQube binary file
+  unarchive: src="{{ sonarqube_install_dir }}/{{ sonarqube_archive }}" dest={{ sonarqube_install_dir }} copy=no
+  environment:
+    LANG: "C"
+    LC_ALL: "C"
+    LC_MESSAGES: "C"
+
+- name: remove SonarQube home directory, if exists
+  file: path={{ sonarqube_home_dir }} state=absent
+
+- name: rename SonarQube home directory
+  command: mv chdir={{ sonarqube_install_dir }} {{ sonarqube_extracted_dir }} {{ sonarqube_version }}
+
+- name: remove SonarQube binary file
+  file: path="{{ sonarqube_install_dir }}/{{ sonarqube_archive }}" state=absent
+
+- name: rewrite wrapper.java.command in /<sonarqube_home_dir>/conf/wrapper.conf
+  replace: dest={{ sonarqube_home_dir }}/conf/wrapper.conf regexp='^wrapper.java.command=.+' replace='wrapper.java.command={{ java_home }}/bin/java' backup=yes
+
+- name: rewrite PIDDIR in /<sonarqube_home_dir>/bin/linux-x86-64/sonar.sh
+  replace: dest={{ sonarqube_home_dir }}/bin/linux-x86-64/sonar.sh regexp='^PIDDIR=.+' replace='PIDDIR="/var/run/"' backup=yes
+
+- name: create SonarQube service startup script
+  copy: src=sonar dest=/etc/init.d/ owner=root group=root mode=u=rwx,g=rx,o=rx
+
+- name: start SonarQube service
+  service: name=sonar state=started enabled=yes

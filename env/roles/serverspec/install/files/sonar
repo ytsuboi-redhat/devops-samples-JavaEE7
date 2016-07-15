@@ -1,0 +1,22 @@
+#!/bin/sh
+#
+# JBoss EAP control script
+#
+# chkconfig: - 80 20
+# description: JBoss EAP startup script
+# processname: jboss-eap
+# pidfile: /var/run/SonarQube.pid
+# config: /etc/default/sonar.conf
+#
+
+# Source function library.
+. /etc/init.d/functions
+
+# Load Java configuration.
+[ -r /etc/java/java.conf ] && . /etc/java/java.conf
+export JAVA_HOME
+
+sonar_home='/opt/sonarqube/5.6'
+arch='linux-x86-64'
+
+$sonar_home/bin/$arch/sonar.sh $1

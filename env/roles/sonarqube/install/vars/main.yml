@@ -1,0 +1,8 @@
+# file: roles/sonarqube/install/vars/main.yml
+
+sonarqube_version: 5.6
+sonarqube_install_dir: "/opt/sonarqube"
+sonarqube_archive: "sonarqube-{{ sonarqube_version }}.zip"
+sonarqube_extracted_dir: "sonarqube-{{ sonarqube_version }}"
+sonarqube_home_dir: "{{ sonarqube_install_dir }}/{{ sonarqube_version }}"
+sonarqube_download_url: "https://sonarsource.bintray.com/Distribution/sonarqube/{{ sonarqube_archive }}"

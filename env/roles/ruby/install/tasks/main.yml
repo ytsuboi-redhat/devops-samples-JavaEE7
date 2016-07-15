@@ -1,0 +1,7 @@
+# file: roles/ruby/install/tasks/main.yml
+
+- name: install ruby
+  yum: name=ruby state=present
+
+- name: install rake
+  gem: name=rake state=latest

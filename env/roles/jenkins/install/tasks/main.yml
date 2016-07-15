@@ -1,0 +1,90 @@
+# file: roles/jenkins/install/tasks/main.yml
+
+- name: ignore requiretty for sudo by root
+  lineinfile: dest=/etc/sudoers line='Defaults:root   !requiretty'
+
+- name: stop Jenkins, if running
+  service: name={{ package_name }} state=stopped
+  ignore_errors: true
+
+- name: remove Jenkins, if installed
+  yum: name={{ package_name }} state=absent
+
+- name: delete jenkins home
+  file: path={{ jenkins_home }} state=absent
+
+- name: import Jenkins GPG Key
+  rpm_key: key={{ key_url }}
+
+- name: install Jenkins Yum Repository
+  get_url: url={{ repo_url }} dest=/etc/yum.repos.d/jenkins.repo
+
+- name: install Jenkins
+  yum: name={{ package_name }}
+
+- name: set JENKINS_PORT in /etc/sysconfig/jenkins
+  replace: dest=/etc/sysconfig/jenkins regexp='^JENKINS_PORT="8080"' replace='JENKINS_PORT="{{ jenkins_port }}"' backup=yes
+
+- name: set JENKINS_USER to root in /etc/sysconfig/jenkins
+  replace: dest=/etc/sysconfig/jenkins regexp='^JENKINS_USER="jenkins"' replace='JENKINS_USER="{{ jenkins_user }}"' backup=no
+
+- name: set JENKINS_AJP_PORT to -1 in /etc/sysconfig/jenkins
+  replace: dest=/etc/sysconfig/jenkins regexp='^JENKINS_AJP_PORT="8009"' replace='JENKINS_AJP_PORT="-1"' backup=yes
+
+- name: start Jenkins
+  service: name={{ package_name }} state=started
+
+- name: wait for a initialAdminPassword to be created
+  wait_for: path={{ jenkins_home }}/secrets/initialAdminPassword
+
+- name: read initial admin password and register
+  command: cat {{ jenkins_home }}/secrets/initialAdminPassword
+  register: pass
+
+- name: copy config.xml
+  template: src=config.xml dest={{ jenkins_home }}
+
+- name: copy credentials.xml
+  template: src=credentials.xml dest={{ jenkins_home }}
+
+- name: copy maven configuration
+  template: src=hudson.tasks.Maven.xml dest={{ jenkins_home }}
+
+- name: copy ansible configuration
+  template: src=org.jenkinsci.plugins.ansible.AnsibleInstallation.xml dest={{ jenkins_home }}
+
+- name: restart Jenkins
+  service: name={{ package_name }} state=restarted
+
+- name: wait for a jenkins to be listened
+  wait_for: port={{ jenkins_port }} delay={{ jenkins_listen_delay }} timeout={{ jenkins_listen_wait_timeout }}
+
+- name: get jenkins-cli.jar
+  get_url: url=http://localhost:{{ jenkins_port }}/jnlpJars/jenkins-cli.jar dest=/tmp
+
+- name: install GitHub Organization Folder Plugin via cli
+  command: java -jar /tmp/jenkins-cli.jar -s http://localhost:{{ jenkins_port }} install-plugin --username admin --password {{ pass.stdout }} github-organization-folder
+
+- name: install Ansible Plugin via cli
+  command: java -jar /tmp/jenkins-cli.jar -s http://localhost:{{ jenkins_port }} install-plugin --username admin --password {{ pass.stdout }} ansible
+
+- name: install Pipeline Plugin via cli
+  command: java -jar /tmp/jenkins-cli.jar -s http://localhost:{{ jenkins_port }} install-plugin --username admin --password {{ pass.stdout }} workflow-aggregator
+
+- name: stop Jenkins
+  service: name={{ package_name }} state=stopped
+
+- name: create directory in job
+  file: path={{ jenkins_home }}/jobs/pipeline-sample/jobs/{{ github_repository_name }} state=directory
+
+- name: copy job configuration
+  template: src=jobs/pipeline-sample/config.xml dest={{ jenkins_home }}/jobs/pipeline-sample
+
+- name: copy repository specified pipeline job configuration
+  template: src=jobs/pipeline-sample/jobs/{{ github_repository_name }}/config.xml dest={{ jenkins_home }}/jobs/pipeline-sample/jobs/{{ github_repository_name }}
+
+- name: start Jenkins
+  service: name={{ package_name }} state=started
+
+- name: wait for a jenkins to be listened
+  wait_for: port={{ jenkins_port }} delay={{ jenkins_listen_delay }} timeout={{ jenkins_listen_wait_timeout }}

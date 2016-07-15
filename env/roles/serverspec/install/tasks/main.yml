@@ -1,0 +1,4 @@
+# file: roles/serverspec/install/tasks/main.yml
+
+- name: install serverspec
+  gem: name=serverspec state=latest
