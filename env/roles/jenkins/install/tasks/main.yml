@@ -44,9 +44,6 @@
 - name: copy config.xml
   template: src=config.xml dest={{ jenkins_home }}
 
-- name: copy credentials.xml
-  template: src=credentials.xml dest={{ jenkins_home }}
-
 - name: copy maven configuration
   template: src=hudson.tasks.Maven.xml dest={{ jenkins_home }}
 
