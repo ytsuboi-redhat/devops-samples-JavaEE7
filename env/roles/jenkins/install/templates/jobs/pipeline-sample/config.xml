@@ -55,16 +55,10 @@
     <daysToKeep>0</daysToKeep>
     <numToKeep>0</numToKeep>
   </orphanedItemStrategy>
-  <triggers>
-    <com.cloudbees.hudson.plugins.folder.computed.PeriodicFolderTrigger plugin="cloudbees-folder@5.12">
-      <spec>* * * * *</spec>
-      <interval>60000</interval>
-    </com.cloudbees.hudson.plugins.folder.computed.PeriodicFolderTrigger>
-  </triggers>
+  <triggers/>
   <navigators>
     <org.jenkinsci.plugins.github__branch__source.GitHubSCMNavigator plugin="github-branch-source@1.8.1">
       <repoOwner>ytsuboi-redhat</repoOwner>
-      <scanCredentialsId>85f2a647-670a-4271-bc96-05ae71db4dc6</scanCredentialsId>
       <checkoutCredentialsId>SAME</checkoutCredentialsId>
       <pattern>devops-samples-JavaEE7</pattern>
       <buildOriginBranch>true</buildOriginBranch>
